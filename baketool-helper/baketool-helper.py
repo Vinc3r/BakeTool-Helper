@@ -13,6 +13,9 @@ samples = 256 # renseigner un chiffre
 changer_device = False
 device = 'GPU' # CPU ou GPU, conserver le charactere '
 
+change_colorspace = False
+colorspace = 'linear' # linear, sRGB
+
 
 """DO NOT TOUCH
 """
@@ -38,6 +41,10 @@ def set_devices_on_enabled_jobs(device):
         if job.enabled:
             job.job_settings.render_device = device
 
+def set_colorspace_on_enabled_jobs(space):
+    for job in scene.BakeTool_Jobs.Jobs:
+        if job.enabled:
+            job.job_pass.Pass[0].colors_space = space
 
 list_jobs_id_and_name()
 if changer_resolution:
@@ -46,3 +53,5 @@ if changer_samples:
     set_samples_on_enabled_jobs(samples)
 if changer_device:
     set_devices_on_enabled_jobs(device)
+if change_colorspace:
+    set_colorspace_on_enabled_jobs(colorspace)
