@@ -13,6 +13,9 @@ samples = 256 # number
 modify_device = False
 device = 'GPU' # CPU or GPU
 
+modify_margin = True
+margin = 2
+
 modify_colorspace = False
 colorspace = 'Linear' # Linear, sRGB or Non-Color
 
@@ -49,6 +52,12 @@ def set_devices_on_enabled_jobs(device):
     for job in scene.BakeTool_Jobs.Jobs:
         if job.enabled:
             job.job_settings.render_device = device
+                
+def set_margin_on_enabled_jobs(margin):
+    for job in scene.BakeTool_Jobs.Jobs:
+        if job.enabled:
+            for Pass in job.job_pass.Pass:
+                Pass.margin = margin
 
 def set_colorspace_on_enabled_jobs(space):
     for job in scene.BakeTool_Jobs.Jobs:
@@ -73,6 +82,8 @@ if modify_samples:
     set_samples_on_enabled_jobs(samples)
 if modify_device:
     set_devices_on_enabled_jobs(device)
+if modify_margin:
+    set_margin_on_enabled_jobs(margin)
 if modify_colorspace:
     set_colorspace_on_enabled_jobs(colorspace)
 if modify_distance:
