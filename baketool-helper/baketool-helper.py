@@ -1,23 +1,30 @@
 import bpy
 
-"""CHOIX UTILISATEUR
-les opérations ne s'appliquent que sur les jobs activés
+""" USER SETUP
+Operations applies only on active jobs
 """
 
-changer_resolution = False
-resolution = '512' # renseigner une valeur présente dans le menu déroulant de baketool, conserver le charactere '
+modify_resolution = False
+resolution = '512' # from 64 to 8192, power of two
 
-changer_samples = False
-samples = 256 # renseigner un chiffre
+modify_samples = False
+samples = 256 # number
 
-changer_device = False
-device = 'GPU' # CPU ou GPU, conserver le charactere '
+modify_device = False
+device = 'GPU' # CPU or GPU
 
-change_colorspace = False
-colorspace = 'linear' # linear, sRGB
+modify_colorspace = False
+colorspace = 'Linear' # Linear, sRGB or Non-Color
 
+# Atlas Mode specific
 
-"""DO NOT TOUCH
+modify_distance = False
+distance = 0.5 # number
+
+modify_bias = False
+bias = 0.25 # number
+
+""" USER SETUP END
 """
 
 scene = bpy.context.scene
@@ -29,12 +36,14 @@ def list_jobs_id_and_name():
 def set_resolution_on_enabled_jobs(size):
     for job in scene.BakeTool_Jobs.Jobs:
         if job.enabled:
-            job.job_pass.Pass[0].size = size
+            for Pass in job.job_pass.Pass:
+                Pass.size = size
 
 def set_samples_on_enabled_jobs(sample):
     for job in scene.BakeTool_Jobs.Jobs:
         if job.enabled:
-            job.job_pass.Pass[0].samples = sample
+            for Pass in job.job_pass.Pass:
+                Pass.samples = sample
 
 def set_devices_on_enabled_jobs(device):
     for job in scene.BakeTool_Jobs.Jobs:
@@ -44,14 +53,29 @@ def set_devices_on_enabled_jobs(device):
 def set_colorspace_on_enabled_jobs(space):
     for job in scene.BakeTool_Jobs.Jobs:
         if job.enabled:
-            job.job_pass.Pass[0].colors_space = space
+            for Pass in job.job_pass.Pass:
+                Pass.colors_space = space
+
+def set_distance_on_enabled_jobs(distance):
+    for job in scene.BakeTool_Jobs.Jobs:
+        if job.enabled and job.job_settings.mode == 'ATLAS':
+            job.job_settings.distance = distance
+
+def set_bias_on_enabled_jobs(bias):
+    for job in scene.BakeTool_Jobs.Jobs:
+        if job.enabled and job.job_settings.mode == 'ATLAS':
+            job.job_settings.bias = bias
 
 list_jobs_id_and_name()
-if changer_resolution:
+if modify_resolution:
     set_resolution_on_enabled_jobs(resolution)
-if changer_samples:
+if modify_samples:
     set_samples_on_enabled_jobs(samples)
-if changer_device:
+if modify_device:
     set_devices_on_enabled_jobs(device)
-if change_colorspace:
+if modify_colorspace:
     set_colorspace_on_enabled_jobs(colorspace)
+if modify_distance:
+    set_distance_on_enabled_jobs(distance)
+if modify_bias:
+    set_bias_on_enabled_jobs(bias)
